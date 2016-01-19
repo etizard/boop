@@ -16,10 +16,32 @@
 #
 import webapp2
 
+from google.appengine.api import users
+from google.appengine.ext import ndb
+import logging
+import os
+import jinja2
+
+# import datastore1 as userDS
+# import datastore2 as boopDS
+# import datastore3 as messageInfoDS
+
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('Hello world!')
+        self.response.write(open("index.html").read())
+
+class SendNewMessageHandler(webapp2.RequestHandler):
+    def get(self):
+        userid = self.request.get('userid')
+        recipientUserid = self.request.get('recipientUserid')
+        message = self.request.get('message')
+
+        userEntry = ndb.Key(urlsafe = self.request.get('id')).get()
+        userEntry.numberSent += 1
+        recipientEntry = ndb.Key(urlsafe = self.request.get('id')).get()
+        # 
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/send', SendNewMessageHandler),
 ], debug=True)
